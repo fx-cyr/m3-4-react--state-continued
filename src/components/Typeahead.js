@@ -4,6 +4,7 @@ import Suggestion from "./Suggestion";
 
 const Typeahead = (props) => {
   const { handleSelect, suggestions, categories } = props;
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0);
   const [value, setValue] = useState("");
   const matches = suggestions.filter((suggestion) => {
     const lowerCaseTitle = suggestion.title.toLowerCase();
@@ -27,6 +28,10 @@ const Typeahead = (props) => {
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               alert(value);
+            } else if (event.key === "ArrowDown") {
+              setSelectedSuggestionIndex(selectedSuggestionIndex + 1);
+            } else if (event.key === "ArrowUp") {
+              setSelectedSuggestionIndex(selectedSuggestionIndex - 1);
             }
           }}
           placeholder="Search"
@@ -34,10 +39,12 @@ const Typeahead = (props) => {
         <ClearButton onClick={() => setValue("")}>Clear</ClearButton>
         {matches.length > 0 ? (
           <Suggestions>
-            {matches.map((match) => {
+            {matches.map((match, index) => {
+              const isSelected = index === selectedSuggestionIndex;
               const category = categories[match.categoryId];
               return (
                 <Suggestion
+                  isSelected={isSelected}
                   category={category}
                   value={value}
                   suggestion={match.title}
